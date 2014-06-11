@@ -1,5 +1,4 @@
-﻿
-SELECT
+﻿SELECT
 
 G.pokerhand_id,
 G.playerhand_id,
@@ -55,4 +54,3 @@ ON G.playerhand_id=R.playerhand_id
 where G.numberofplayers=6
 
 limit 100
-
