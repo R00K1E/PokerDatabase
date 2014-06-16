@@ -1,8 +1,10 @@
 rm(list=ls())
+library(Hmisc)
+load(file.path("Boostrap n of m","boot_m_of_n_07_1000.RData"))
 
 load("All_pokerhand_ids.RData")
 games <- summary(factor(all.ids$table))
-rm(all.ids)
+
 
 expand <- function(x) data.frame(Var1=x[c(1,1,1,1,1,2,2,2,2,3,3,3,4,4,5)],
 																 Var2=x[c(2,3,4,5,6,3,4,5,6,4,5,6,5,6,6)])
@@ -60,23 +62,34 @@ run <- function(mn, se, variablename, legend.pos){
 	print(cbind(data.frame(Stake="5/10"),linear.tests(mn[,1],se[,1],games[1])))
 }
 
-
-load(file.path("Limpers","boot_limpers_1000.RData"))
 head(out)
 
-library(Hmisc)
-#Percent of Games
-mn <- with(out, tapply(PercentofAllGames, list(Position,Group), mean)) 
-se <- with(out, tapply(PercentofAllGames, list(Position,Group),sd)) 
-run(mn, se, "Percent of Games (%)", "topright")
+n = 19170981
+m = n ^ .7
 
-#win rate
-mn <- with(out, tapply(WinRate, list(Position,Group), mean)) 
-se <- with(out, tapply(WinRate, list(Position,Group),sd)) 
-run(mn, se, "WinRate (%)", "topright")
+par(mfrow=c(1,1))
+#fun <- sd
+fun <- function(x) ((m/n)^.5) * sd(x)
 
-#return Rate
-mn <- with(out, tapply(ReturnRate, list(Position,Group), mean)) 
-se <- with(out, tapply(ReturnRate, list(Position,Group),sd)) 
-run(mn, se, "ReturnRate (%)", "topleft")
+#Table 1 Results
+#Return rate
+mn <- with(out, tapply(rr, list(positiontype_id,group), mean)) * 100
+se <- with(out, tapply(rr, list(positiontype_id,group),fun)) * 100
+run(mn, se, "Return Rate %", "topleft")
 
+head(out)
+#Return rate ratio
+mn <- with(out, tapply(rr_ratio, list(positiontype_id,group), mean)) 
+se <- with(out, tapply(rr_ratio, list(positiontype_id,group),fun)) 
+run(mn, se, "Return Rate Ratio", "topright")
+
+#Contribution rate ratio  - Return rate ratio
+mn <- with(out, tapply(cr_rr_diff, list(positiontype_id,group), mean)) 
+se <- with(out, tapply(cr_rr_diff, list(positiontype_id,group),fun)) 
+run(mn, se, "Contribution Rate Ratio - Return Rate Ratio", "topright")
+
+
+#Contribution rate ratio  / Return rate ratio
+mn <- with(out, tapply(cr / rr, list(positiontype_id,group), mean)) 
+se <- with(out, tapply(cr / rr, list(positiontype_id,group),fun)) 
+run(mn, se, "Contribution Rate / Return Rate", "topleft")

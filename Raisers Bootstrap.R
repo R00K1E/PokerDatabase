@@ -4,8 +4,18 @@ library(data.table)
 
 setwd("J:/Management Research/UoS PFM/Docs/WORK/MANAGEMENT/STUDIES/Favls poker/LEIGHTON")
 load(file.path("Raisers","Raisers Main Table.RData"))
+names(main)
+main <- main[,c(1,2,3,4,5,9,21)]
+head(main)
 main$games <- 1
 main$group <- as.factor(main$group)
+main$win <- as.numeric(main$win)
+main$games <- as.numeric(main$games)
+main$totalbet <- as.numeric(main$totalbet)
+main$net_return <- as.numeric(main$net_return)
+
+
+##run
 main <- data.table(main)
 
 boot.sample <- cmpfun(function(main){
@@ -14,7 +24,8 @@ boot.sample <- cmpfun(function(main){
 	return(main[s,])
 })
 
-total <- 5#1000
+
+total <- 1000
 pb <- winProgressBar(title ="progress bar", min = 0, max = total, width = 300)
 
 i=1
@@ -26,8 +37,8 @@ rm(data)
 data <- data.table(boot.sample(main))
 
 
-x <- data[,list(wins=sum(as.numeric(win)), games=sum(as.numeric(games)), totalbet=sum(as.numeric(totalbet)),
-									 net_return=sum(as.numeric(net_return))), by = c('positiontype_id','group')]
+x <- data[,list(wins=sum(win), games=sum(games), totalbet=sum(totalbet),
+									 net_return=sum(net_return)), by = c('positiontype_id','group')]
 x <- x[order(c(x$positiontype_id)),]
 x <- x[order(c(x$group)),]
 

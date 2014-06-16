@@ -61,19 +61,19 @@ run <- function(mn, se, variablename, legend.pos){
 }
 
 
-load(file.path("Limpers","boot_limpers_1000.RData"))
+load(file.path("Raisers","boot_raisers_1000.RData"))
 head(out)
 
 library(Hmisc)
 #Percent of Games
 mn <- with(out, tapply(PercentofAllGames, list(Position,Group), mean)) 
 se <- with(out, tapply(PercentofAllGames, list(Position,Group),sd)) 
-run(mn, se, "Percent of Games (%)", "topright")
+run(mn, se, "Percent of Games (%)", "topleft")
 
 #win rate
 mn <- with(out, tapply(WinRate, list(Position,Group), mean)) 
 se <- with(out, tapply(WinRate, list(Position,Group),sd)) 
-run(mn, se, "WinRate (%)", "topright")
+run(mn, se, "WinRate (%)", "top")
 
 #return Rate
 mn <- with(out, tapply(ReturnRate, list(Position,Group), mean)) 
